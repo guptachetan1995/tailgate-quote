@@ -1,0 +1,52 @@
+{
+  "name": "tailgate-quote",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Voice agent on AssemblyAI's Voice Agent API that drafts priced contractor quotes with a receipt for every line; only the owner's tap sends",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "demo": "node scripts/demo.js",
+    "replay": "node scripts/replay.js",
+    "clips": "node scripts/make-clips.js",
+    "record-session": "node scripts/record-session.js",
+    "latency": "node scripts/latency.js",
+    "keyterms-ab": "node scripts/keyterms-ab.js",
+    "sample-tape": "node scripts/make-sample-tape.js",
+    "build:pages": "node scripts/build-pages.js",
+    "media": "node scripts/render-media.js",
+    "presubmit": "node scripts/presubmit.js",
+    "test": "jest",
+    "lint": "eslint src/ tests/ scripts/ public/ jest.setup.js --ext .js --max-warnings 0 --fix",
+    "lint:check": "eslint src/ tests/ scripts/ public/ jest.setup.js --ext .js --max-warnings 0"
+  },
+  "keywords": [
+    "assemblyai",
+    "voice-agent",
+    "contractors",
+    "quotes"
+  ],
+  "author": "Chetan Gupta",
+  "license": "MIT",
+  "dependencies": {
+    "express": "5.2.1"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "eslint": "8.57.1",
+    "jest": "29.7.0"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "roots": [
+      "<rootDir>/tests"
+    ],
+    "setupFiles": [
+      "<rootDir>/jest.setup.js"
+    ],
+    "transform": {}
+  }
+}

@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+/clips/
+tapes/raw/
+.DS_Store
+*.log
+/media/

@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tailgate Quote — deck</title>
+<!--
+  The ten-page deck for the lablab submission, one 1600 × 900 page per slide. It is rendered to
+  PDF by scripts/render-media.js, which also fills every [data-fill] element: the measured
+  latencies (docs/evidence/latency.json), the session the screenshots come from, and the
+  repository and demo links (docs/submission.md). Screenshots are real frames of the app,
+  taken by the same script into shots/.
+-->
+<style>
+@page { size: 1600px 900px; margin: 0; }
+:root {
+  --bg: #f4f2ed; --panel: #ffffff; --ink: #1c1b19; --muted: #5c574f; --line: #d9d4c9;
+  --accent: #b45309; --accent-bg: #fff4e0; --agent: #5b3aa8; --agent-bg: #efe9fb;
+  --owner: #0b6848; --owner-bg: #e3f4ec; --voice: #2f5277; --voice-bg: #e6eef7; --danger: #b3261e;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); font: 26px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+.slide { width: 1600px; height: 900px; padding: 72px 96px 64px; position: relative; overflow: hidden; break-after: page; display: flex; flex-direction: column; }
+.slide:last-child { break-after: auto; }
+.kicker { color: var(--accent); font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; font-size: 20px; margin: 0 0 14px; }
+h1 { font-size: 88px; line-height: 1.02; margin: 0 0 24px; letter-spacing: -0.02em; }
+h2 { font-size: 54px; line-height: 1.1; margin: 0 0 28px; letter-spacing: -0.01em; }
+p { margin: 0 0 18px; }
+.lead { font-size: 34px; line-height: 1.35; color: var(--ink); max-width: 1300px; }
+.muted { color: var(--muted); }
+.foot { position: absolute; left: 96px; right: 96px; bottom: 36px; display: flex; justify-content: space-between; color: var(--muted); font-size: 18px; }
+.cols { display: grid; gap: 28px; grid-template-columns: repeat(3, 1fr); margin-top: 12px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 26px 28px; }
+.card h3 { margin: 0 0 10px; font-size: 30px; }
+.card p { font-size: 23px; margin: 0; color: var(--muted); }
+.big { font-size: 64px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; margin-bottom: 10px; }
+.tag { display: inline-block; font-size: 18px; font-weight: 800; padding: 3px 12px; border-radius: 999px; margin-right: 8px; }
+.tag.agent { background: var(--agent-bg); color: var(--agent); }
+.tag.owner { background: var(--owner-bg); color: var(--owner); }
+.tag.voice { background: var(--voice-bg); color: var(--voice); }
+.flow { display: grid; grid-template-columns: 1.25fr 60px 1fr 60px 1fr; align-items: center; gap: 0; margin: 10px 0 26px; }
+.flow .arrow { text-align: center; font-size: 40px; color: var(--muted); }
+.flow .box { background: var(--panel); border: 2px solid var(--line); border-radius: 18px; padding: 22px 24px; font-size: 22px; min-height: 250px; }
+.flow .box h3 { margin: 0 0 10px; font-size: 28px; }
+.flow .box ul { margin: 0; padding-left: 22px; }
+.flow .aai { border-color: var(--voice); }
+.flow .gate { border-color: var(--accent); }
+.flow .owner { border-color: var(--owner); }
+.measured { background: var(--voice-bg); color: var(--voice); border-radius: 14px; padding: 16px 22px; font-weight: 700; font-size: 24px; }
+.shots { display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 24px; align-items: start; margin-top: 4px; }
+.shots figure { margin: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 12px; }
+.shots img { width: 100%; max-height: 500px; object-fit: contain; object-position: top; display: block; border-radius: 8px; }
+.shots figcaption { font-size: 20px; color: var(--muted); margin-top: 10px; }
+table { border-collapse: collapse; width: 100%; font-size: 20px; background: var(--panel); border-radius: 14px; overflow: hidden; }
+th, td { text-align: left; vertical-align: top; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+th { background: var(--accent-bg); font-size: 18px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--accent); }
+tr.us td { background: var(--owner-bg); font-weight: 700; }
+.src { font-size: 17px; color: var(--muted); margin-top: 14px; }
+.links { font-size: 28px; line-height: 1.8; }
+.links code { font-size: 26px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 2px 10px; }
+.draft-mark { display: none; }
+body.draft .draft-mark { display: block; position: absolute; top: 24px; right: 36px; color: var(--danger); font-weight: 800; font-size: 20px; letter-spacing: 0.08em; }
+</style>
+</head>
+<body>
+
+<section class="slide">
+  <p class="draft-mark">DRAFT · NOT FOR SUBMISSION</p>
+  <p class="kicker">AssemblyAI Voice Agent Hackathon · lablab.ai · September 2026</p>
+  <h1>Tailgate Quote</h1>
+  <p class="lead">A voice agent that drafts every quote at the van, proves every line with the owner's own words, and can't be talked into sending one.</p>
+  <p class="lead" style="margin-top: 36px; font-size: 44px; font-weight: 800; color: var(--accent);">Voice drafts. Hands decide.</p>
+  <div class="foot"><span>Built on AssemblyAI's Voice Agent API</span><span>1 / 10</span></div>
+</section>
+
+<section class="slide">
+  <p class="draft-mark">DRAFT · NOT FOR SUBMISSION</p>
+  <p class="kicker">The problem</p>
+  <h2>The job is in the owner's head at the van. The quote waits until evening.</h2>
+  <div class="cols">
+    <div class="card"><h3>Quoted from memory</h3><p>A small plumbing or HVAC firm's owner walks the job, then drives to the next one. The details live in his head until he types them up.</p></div>
+    <div class="card"><h3>Typed late</h3><p>A quote typed at night takes 20 to 34 minutes by QuoteIQ's own published figure, and the customer waits a day for a price.</p></div>
+    <div class="card"><h3>Details slip</h3><p>Between the driveway and the keyboard, a valve size or a length of pipe gets lost, and the quote is wrong before it is sent.</p></div>
+  </div>
+  <div class="foot"><span>Tailgate Quote</span><span>2 / 10</span></div>
+</section>
+
+<section class="slide">
+  <p class="draft-mark">DRAFT · NOT FOR SUBMISSION</p>
+  <p class="kicker">The solution</p>
+  <h2>Say the job once. Answer one question. Find a correct draft on your phone.</h2>
+  <div class="cols">
+    <div class="card"><h3><span class="tag voice">Talk</span></h3><p>The owner talks the job through at the tailgate. The agent listens, asks when something is ambiguous ("half-inch or three-quarter?") and reads the draft back.</p></div>
+    <div class="card"><h3><span class="tag agent">Draft</span></h3><p>Every line cites the owner's exact words. Prices come only from his price list. A line whose words, quantity or customer don't match what was said is refused.</p></div>
+    <div class="card"><h3><span class="tag owner">Decide</span></h3><p>Sending is a tap, never a sentence. A voice anyone nearby can fake is not a signature, so "go ahead and send it" is heard, logged and refused.</p></div>
+  </div>
+  <div class="foot"><span>Tailgate Quote</span><span>3 / 10</span></div>
+</section>
+
+<section class="slide">
+  <p class="draft-mark">DRAFT · NOT FOR SUBMISSION</p>
+  <p class="kicker">How it works</p>
+  <h2>One AssemblyAI session. One function for agent and owner alike.</h2>
+  <div class="flow">
+    <div class="box aai"><h3>AssemblyAI Voice Agent API</h3><ul><li>Streaming speech-to-text with live partials</li><li>Turn detection and barge-in</li><li>Keyterms built from the price list</li><li>JSON-schema tool calls</li><li>The agent's voice</li></ul></div>
+    <div class="arrow">→</div>
+    <div class="box gate"><h3>invoke(tool, args, actor)</h3><ul><li>Agent: search, read, draft, revise</li><li>Evidence check on every line</li><li>Prices from the price list only</li><li>Send, reject: not tools</li></ul></div>
+    <div class="arrow">←</div>
+    <div class="box owner"><h3>The owner's screen</h3><ul><li>Approve &amp; send</li><li>Edit quantities</li><li>Reject, with a reason</li><li>Activity log: who did what</li></ul></div>
+  </div>
+  <p class="measured">Measured on the recorded session: <span data-fill="latency">not measured yet</span></p>
+  <div class="foot"><span>Tailgate Quote</span><span>4 / 10</span></div>
+</section>
+
+<section class="slide">
+  <p class="draft-mark">DRAFT · NOT FOR SUBMISSION</p>
+  <p class="kicker">What it looks like</p>
+  <h2 style="margin-bottom: 18px;">Real frames of the app, not mock-ups</h2>
+  <div class="shots">
+    <figure><img data-shot="receipts.png" alt="A drafted quote with the owner's words highlighted under every line"><figcaption>Every line with its receipt: the words that produced it, highlighted in the turn they came from.</figcaption></figure>
+    <figure><img data-shot="spoken.png" alt="The customer's spoken send it over, flagged and not accepted"><figcaption>The customer's "go ahead and send it over": heard, logged, not accepted.</figcaption></figure>
+    <figure><img data-shot="copy.png" alt="The customer's copy of the sent quote"><figcaption>After the owner's tap: the customer's copy.</figcaption></figure>
+  </div>
+  <div class="foot"><span data-fill="session">Scripted sample</span><span>5 / 10</span></div>
+</section>
+
+<section class="slide">
+  <p class="draft-mark">DRAFT · NOT FOR SUBMISSION</p>
+  <p class="kicker">Market</p>
+  <h2>Small trade firms, counted by the US Census</h2>
+  <div class="cols">
+    <div class="card"><div class="big">94,383</div><p>plumbing, heating and air-conditioning contractors (NAICS 23822) with fewer than 20 employees</p></div>
+    <div class="card"><div class="big">$44.2M</div><p>a year serviceable market: those firms at $39 a month</p></div>
+    <div class="card"><div class="big">$229M</div><p>a year across all 489,063 specialty trade contractors (NAICS 238) at the same price</p></div>
+  </div>
+  <p class="src">Source: US Census Bureau, Statistics of US Businesses 2021, employer firms only (sole proprietors without payroll are excluded, so the counts are conservative). Market sizes are counts × price, not forecasts.</p>
+  <div class="foot"><span>Tailgate Quote</span><span>6 / 10</span></div>
+</section>
+
+<section class="slide">
+  <p class="draft-mark">DRAFT · NOT FOR SUBMISSION</p>
+  <p class="kicker">Revenue and a worked ROI</p>
+  <h2>$39 a month per owner seat, 120 voice minutes included</h2>
+  <div class="cols">
+    <div class="card"><h3>Cost to serve</h3><p>AssemblyAI's published Voice Agent API rate is $0.075 a minute: about $0.15 for a 2-minute quote, $9 for a month's included minutes.</p></div>
+    <div class="card"><h3>Owner time back</h3><p>Assumptions: 8 quotes a week, 25 minutes to type one, 5 to talk one through and review it. 20 minutes × 8 × 52 ÷ 12 ≈ <strong>11.6 hours a month</strong>.</p></div>
+    <div class="card"><h3>Second channel</h3><p>The draft-only gate and per-line receipts, licensed to field-service platforms as a per-quote API (proposal: $0.40 per drafted quote, voice included).</p></div>
+  </div>
+  <p class="src">Pricing is a proposal; no customers, pilots or revenue are claimed. Every ROI input above is an assumption, labelled as one.</p>
+  <div class="foot"><span>Tailgate Quote</span><span>7 / 10</span></div>
+</section>
+
+<section class="slide">
+  <p class="draft-mark">DRAFT · NOT FOR SUBMISSION</p>
+  <p class="kicker">Competition</p>
+  <h2 style="margin-bottom: 18px;">They turn a memo into a quote. Tailgate talks back, and can't be talked into sending.</h2>
+  <table>
+    <thead><tr><th></th><th>Price</th><th>Live back-and-forth</th><th>Receipt per line</th><th>Prices only from your list</th><th>Voice can't send</th><th>Supplier check</th></tr></thead>
+    <tbody>
+      <tr><td>VoxTrade</td><td>Free (5 quotes/mo); Pro £14.99/mo</td><td>No: voice notes, video walkthroughs</td><td>Not stated</td><td>No: local market rates</td><td>Not stated</td><td>Materials lists</td></tr>
+      <tr><td>Voice2Jobs</td><td>Free start; Team from $129/mo</td><td>No: one-tap capture</td><td>Not stated</td><td>Yes: your saved price list</td><td>Not stated; "one tap sends"</td><td>Not stated</td></tr>
+      <tr><td>QuoteIQ (AI Estimator)</td><td>Essentials $29.99/mo</td><td>No: description, then typed follow-ups</td><td>No: confidence scores</td><td>No: local market pricing</td><td>Not stated</td><td>Not stated</td></tr>
+      <tr class="us"><td>Tailgate Quote</td><td>$39/mo (proposal)</td><td>Yes</td><td>Yes</td><td>Yes, enforced by schema</td><td>Yes, structurally</td><td>Drafted; owner sends</td></tr>
+    </tbody>
+  </table>
+  <p class="src">Each cell checked on the vendor's own public page on 28 Sep 2026. Their strengths: all three do invoicing, payments and many languages; VoxTrade and QuoteIQ cost less per seat.</p>
+  <div class="foot"><span>Tailgate Quote</span><span>8 / 10</span></div>
+</section>
+
+<section class="slide">
+  <p class="draft-mark">DRAFT · NOT FOR SUBMISSION</p>
+  <p class="kicker">Go-to-market and validation</p>
+  <h2>Sold where contractors already stand at a counter</h2>
+  <div class="cols">
+    <div class="card"><h3>Supply houses</h3><p>The supplier stock check gives the supply-house counter a reason to recommend it.</p></div>
+    <div class="card"><h3>Associations</h3><p>State plumbing and HVAC contractor associations reach the owner-operators it is built for.</p></div>
+    <div class="card"><h3>Five pilots</h3><p>One metric: the share of quotes sent the same day as the visit, before and after; and the share of drafts sent without edits.</p></div>
+  </div>
+  <div class="foot"><span>Tailgate Quote</span><span>9 / 10</span></div>
+</section>
+
+<section class="slide">
+  <p class="draft-mark">DRAFT · NOT FOR SUBMISSION</p>
+  <p class="kicker">Next</p>
+  <h2>Supplier replies read back by voice. A check on spoken numbers.</h2>
+  <p class="lead">Try the gate yourself: the live demo replays the recorded session through the real code, with a panel where you can try the forbidden actions as the agent and watch them fail.</p>
+  <div class="links">
+    <div>Live demo <code data-fill="demo">the demo URL</code></div>
+    <div>Code (MIT) <code data-fill="repo">the repository URL</code></div>
+  </div>
+  <p class="lead" style="margin-top: 28px; font-size: 44px; font-weight: 800; color: var(--accent);">Voice drafts. Hands decide.</p>
+  <div class="foot"><span>All businesses, people and contacts shown are fictional; the owner's and customer's lines are synthesized speech.</span><span>10 / 10</span></div>
+</section>
+
+</body>
+</html>
