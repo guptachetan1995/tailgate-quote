@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' blob: data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Tailgate Quote</title>
+<meta name="description" content="A voice agent on AssemblyAI's Voice Agent API drafts priced contractor quotes with a receipt for every line. Voice drafts; only the owner's tap sends.">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f4f2ed;
+  --panel: #ffffff;
+  --panel-2: #faf9f6;
+  --ink: #1c1b19;
+  --muted: #5c574f;
+  --line: #d9d4c9;
+  --accent: #b45309;
+  --accent-bg: #fff4e0;
+  --agent: #5b3aa8;
+  --agent-bg: #efe9fb;
+  --owner: #0b6848;
+  --owner-bg: #e3f4ec;
+  --voice: #2f5277;
+  --voice-bg: #e6eef7;
+  --danger: #b3261e;
+  --danger-bg: #fdecea;
+  --warn: #8a5a00;
+  --warn-bg: #fff4d6;
+  --mark: #ffe28a;
+  --focus: #1f5fd6;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #161513;
+    --panel: #201f1c;
+    --panel-2: #1b1a18;
+    --ink: #f1eee8;
+    --muted: #b3ada2;
+    --line: #3a3732;
+    --accent: #f0a04b;
+    --accent-bg: #3a2a14;
+    --agent: #c7b3ff;
+    --agent-bg: #2e2545;
+    --owner: #6fdcb0;
+    --owner-bg: #173a2d;
+    --voice: #a9c7ea;
+    --voice-bg: #1d2c3d;
+    --danger: #ff8a80;
+    --danger-bg: #3d1c19;
+    --warn: #ffd27a;
+    --warn-bg: #3a2f14;
+    --mark: #6b5a12;
+    --focus: #8ab4ff;
+    --shadow: none;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.skip { position: absolute; left: 8px; top: -40px; background: var(--panel); padding: 6px 10px; border-radius: 6px; z-index: 10; }
+.skip:focus { top: 8px; }
+h1, h2, h3 { margin: 0; line-height: 1.2; }
+h2 { font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+
+/* ---- header ---- */
+.top {
+  display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: center; justify-content: space-between;
+  padding: 10px 16px; background: var(--panel); border-bottom: 1px solid var(--line);
+}
+.brand h1 { font-size: 1.35rem; letter-spacing: -0.01em; }
+.brand p { margin: 0; color: var(--accent); font-weight: 700; }
+.session { display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: 1 1 520px; }
+.session-label { margin: 0; font-weight: 600; }
+.session-label .tag { display: inline-block; font-size: 0.75rem; font-weight: 700; padding: 1px 8px; border-radius: 999px; margin-right: 6px; vertical-align: 1px; }
+.tag.sample { background: var(--warn-bg); color: var(--warn); }
+.tag.recorded { background: var(--voice-bg); color: var(--voice); }
+.tag.live { background: var(--danger-bg); color: var(--danger); }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.modes { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; padding: 2px; margin: 0; }
+.modes label { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 6px; cursor: pointer; }
+.modes label:has(input:checked) { background: var(--accent-bg); font-weight: 600; }
+.modes label:has(input:disabled) { opacity: 0.55; cursor: not-allowed; }
+.modes input { margin: 0; accent-color: var(--accent); }
+.btn {
+  border: 1px solid var(--line); background: var(--panel-2); border-radius: 8px; padding: 6px 12px;
+  cursor: pointer; font-weight: 600; min-height: 36px;
+}
+.btn:hover:not(:disabled) { border-color: var(--muted); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.send { background: var(--owner); border-color: var(--owner); color: #fff; }
+.btn.danger { color: var(--danger); border-color: var(--danger); background: transparent; }
+.btn.agent { color: var(--agent); border-color: var(--agent); background: var(--agent-bg); font-weight: 600; text-align: left; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn.primary, :root:not([data-theme="light"]) .btn.send { color: #111; } }
+.status { color: var(--muted); font-variant-numeric: tabular-nums; }
+.hint { margin: 0; color: var(--muted); font-size: 0.85rem; }
+.meta.sub { margin: 10px 0 0; }
+progress { width: 140px; height: 8px; accent-color: var(--accent); }
+
+.aai { margin: 0; padding: 6px 16px; background: var(--voice-bg); color: var(--voice); font-size: 0.85rem; font-weight: 600; border-bottom: 1px solid var(--line); }
+.btn.hero { display: block; width: 100%; margin-top: 12px; padding: 14px 16px; font-size: 1.1rem; min-height: 52px; }
+.btn.hero[hidden] { display: none; }
+
+/* ---- banner ---- */
+.banner {
+  margin: 10px 16px 0; padding: 10px 14px; border-radius: 10px; border: 2px solid var(--danger);
+  background: var(--danger-bg); color: var(--ink);
+}
+.banner strong { color: var(--danger); }
+.banner p { margin: 0; }
+.notice { margin: 0 0 10px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel-2); }
+.notice.ok { border-color: var(--owner); background: var(--owner-bg); }
+.notice.refused { border-color: var(--danger); background: var(--danger-bg); }
+
+/* ---- layout ---- */
+.grid { display: grid; gap: 12px; padding: 12px 16px 16px; }
+.pane { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px; box-shadow: var(--shadow); min-width: 0; }
+.pane > h2 { margin-bottom: 8px; }
+.stack { display: grid; gap: 12px; align-content: start; min-width: 0; }
+@media (min-width: 1000px) {
+  body { height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+  .grid { flex: 1; min-height: 0; grid-template-columns: minmax(250px, 1fr) minmax(380px, 1.5fr) minmax(270px, 1fr); }
+  .grid > * { min-height: 0; overflow: auto; }
+  .stack { overflow: auto; }
+}
+@media (max-width: 999px) {
+  .grid { grid-template-columns: 1fr; }
+  #drafts-pane { order: -1; }
+}
+/* ?layout=tailgate: the board (transcript, agent panel, log) beside the owner's phone, which
+   holds the drafts and the Approve & send button. */
+@media (min-width: 1000px) {
+  .layout-tailgate .grid { grid-template-columns: minmax(280px, 1fr) minmax(280px, 1fr) 390px; }
+  .layout-tailgate #drafts-pane {
+    order: 3; border: 10px solid var(--ink); border-radius: 36px; padding: 18px 14px;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22);
+  }
+  .layout-tailgate #leads { display: none; }
+}
+
+/* ---- transcript ---- */
+.transcript { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.turn { border-radius: 10px; padding: 8px 10px; border: 1px solid var(--line); background: var(--panel-2); }
+.turn .who { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; color: var(--voice); display: flex; gap: 8px; justify-content: space-between; }
+.turn p { margin: 2px 0 0; }
+.turn.partial p { color: var(--muted); font-style: italic; }
+.turn.partial { border-style: dashed; }
+.turn.agent { background: var(--agent-bg); border-color: transparent; }
+.turn.agent .who { color: var(--agent); }
+.turn.spoken { border: 2px solid var(--danger); }
+.turn .flag { color: var(--danger); font-weight: 700; font-size: 0.85rem; }
+.turn .cut { color: var(--danger); font-weight: 600; }
+.empty { color: var(--muted); margin: 4px 0; }
+
+/* ---- drafts ---- */
+.leads { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; padding: 0; list-style: none; }
+.leads li { background: var(--panel-2); border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; font-size: 0.85rem; }
+.cards { display: grid; gap: 12px; }
+.card { border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: var(--panel-2); }
+.card.status-draft { border-left: 5px solid var(--accent); }
+.card.status-sent { border-left: 5px solid var(--owner); }
+.card.status-discarded { border-left: 5px solid var(--muted); opacity: 0.85; }
+.card header { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; justify-content: space-between; }
+.card h3 { font-size: 1.05rem; }
+.pill { font-size: 0.75rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+.pill.draft { background: var(--accent-bg); color: var(--accent); }
+.pill.sent { background: var(--owner-bg); color: var(--owner); }
+.pill.discarded { background: var(--panel); color: var(--muted); border: 1px solid var(--line); }
+.meta { margin: 2px 0 8px; color: var(--muted); font-size: 0.85rem; }
+.lines { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.line { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; }
+.line .name { font-weight: 600; }
+.line .amount { text-align: right; font-variant-numeric: tabular-nums; }
+.line .qty { color: var(--muted); font-variant-numeric: tabular-nums; }
+.receipt { grid-column: 1 / -1; margin: 0; font-size: 0.85rem; color: var(--muted); border-left: 3px solid var(--line); padding-left: 8px; }
+.receipt mark { background: var(--mark); color: inherit; padding: 0 2px; border-radius: 3px; }
+.receipt .src { font-weight: 700; color: var(--voice); }
+.receipt.hand .src { color: var(--owner); }
+.total { display: flex; justify-content: space-between; border-top: 1px solid var(--line); margin-top: 10px; padding-top: 8px; font-weight: 700; font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+.revisions, .refusals { margin: 8px 0 0; padding-left: 18px; font-size: 0.85rem; }
+.revisions del { color: var(--danger); }
+.revisions ins { color: var(--owner); text-decoration: none; font-weight: 700; }
+.refusals { color: var(--danger); }
+.spoken-note { margin: 10px 0 0; padding: 8px 10px; border-radius: 8px; background: var(--danger-bg); border: 1px solid var(--danger); font-size: 0.9rem; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; align-items: center; }
+.actions .btn.send.called { box-shadow: 0 0 0 3px var(--danger-bg), 0 0 0 5px var(--danger); }
+.gate-note { margin: 6px 0 0; font-size: 0.8rem; color: var(--muted); }
+.qty-input { width: 5.5em; padding: 4px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); }
+.reason { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
+.reason input { flex: 1 1 200px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); }
+.copy { margin-top: 12px; border: 1px dashed var(--owner); border-radius: 10px; padding: 12px; background: var(--panel); }
+.copy h4 { margin: 0 0 4px; font-size: 0.95rem; }
+.copy table { width: 100%; border-collapse: collapse; font-size: 0.88rem; font-variant-numeric: tabular-nums; }
+.copy th, .copy td { text-align: left; padding: 3px 4px; border-bottom: 1px solid var(--line); }
+.copy td.num, .copy th.num { text-align: right; }
+.copy .small { color: var(--muted); font-size: 0.8rem; margin: 6px 0 0; }
+details.by-hand { margin: 0 0 12px; border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; background: var(--panel-2); }
+details.by-hand summary { cursor: pointer; font-weight: 700; color: var(--owner); }
+.hand-form { display: grid; grid-template-columns: auto 1fr; gap: 8px 10px; align-items: center; margin-top: 8px; }
+.hand-form select, .hand-form input { padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); min-width: 0; }
+.hand-search { display: flex; gap: 6px; min-width: 0; }
+.hand-search input { flex: 1; min-width: 0; }
+.hand-results, .hand-lines { grid-column: 1 / -1; list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 0.88rem; }
+.hand-results li, .hand-lines li { display: flex; gap: 8px; align-items: center; justify-content: space-between; }
+.hand-lines li { border-left: 3px solid var(--owner); padding-left: 8px; }
+.hand-lines input { width: 5em; }
+.hand-form #hand-create { grid-column: 1 / -1; justify-self: start; }
+
+/* ---- activity log ---- */
+.log { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.entry { display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel-2); font-size: 0.87rem; }
+.entry .badge { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; padding: 2px 7px; border-radius: 6px; align-self: start; white-space: nowrap; }
+.badge.agent { background: var(--agent-bg); color: var(--agent); }
+.badge.owner { background: var(--owner-bg); color: var(--owner); }
+.badge.voice { background: var(--voice-bg); color: var(--voice); }
+.badge.none { background: var(--danger-bg); color: var(--danger); }
+.entry .what { overflow-wrap: anywhere; }
+.entry .when { grid-column: 2; color: var(--muted); font-size: 0.75rem; }
+.entry.refused { border-color: var(--danger); background: var(--danger-bg); }
+.entry .out { font-weight: 700; color: var(--danger); }
+
+/* ---- agent panel ---- */
+.panel-buttons { display: grid; gap: 6px; }
+.tries { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; }
+.try { border-radius: 8px; padding: 6px 8px; font-size: 0.87rem; border: 1px solid var(--line); }
+.try.refused { border-color: var(--danger); background: var(--danger-bg); }
+.try.listed { border-color: var(--agent); background: var(--agent-bg); }
+.try strong { display: block; }
+
+/* ---- wire rail ---- */
+details.rail { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 8px; }
+details.rail summary { cursor: pointer; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.wire { list-style: none; margin: 8px 0 0; padding: 0; font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; display: grid; gap: 2px; }
+.wire li { display: grid; grid-template-columns: 4.2em 1.2em 1fr; gap: 4px; overflow-wrap: anywhere; }
+.wire .t { color: var(--muted); text-align: right; }
+.wire .held { color: var(--warn); }
+.wire .bad { color: var(--danger); font-weight: 700; }
+.wire .good { color: var(--owner); }
+footer.foot { padding: 0 16px 12px; color: var(--muted); font-size: 0.8rem; }
+footer.foot p { margin: 0; }
+@media (min-width: 1000px) { footer.foot { padding-bottom: 8px; } }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+<meta name="tailgate-build" content="869b13b3c620">
+</head>
+<body>
+<a class="skip" href="#drafts-pane">Skip to the drafts</a>
+<header class="top">
+  <div class="brand">
+    <h1>Tailgate Quote</h1>
+    <p>Voice drafts. Hands decide.</p>
+  </div>
+  <div class="session">
+    <p id="session-label" class="session-label">Loading…</p>
+    <div class="controls" role="group" aria-label="Voice session">
+      <fieldset class="modes" id="modes">
+        <legend class="sr-only">Mode</legend>
+        <label><input type="radio" name="mode" value="replay" checked> <span id="replay-name">Replay recorded session</span></label>
+        <label><input type="radio" name="mode" value="live"> Live mic</label>
+      </fieldset>
+      <button type="button" class="btn primary" id="primary">Play</button>
+      <label id="speed-wrap" hidden>Speed
+        <select id="speed">
+          <option value="1">1×</option>
+          <option value="2">2×</option>
+          <option value="4">4×</option>
+          <option value="8">8×</option>
+        </select>
+      </label>
+      <button type="button" class="btn" id="skip" hidden>Skip to end</button>
+      <progress id="progress" max="1" value="0" hidden aria-label="Replay progress"></progress>
+      <span id="elapsed" class="status"></span>
+      <span id="status" class="status" role="status"></span>
+    </div>
+    <p id="mode-hint" class="hint"></p>
+  </div>
+</header>
+<p id="aai" class="aai">AssemblyAI Voice Agent API: streaming speech-to-text with live partials, turn detection, keyterms from the price list, JSON-schema tool calls and the agent's voice, in one WebSocket session.</p>
+
+<div id="banner" class="banner" role="alert" hidden></div>
+
+<main class="grid">
+  <section class="pane" id="transcript-pane" aria-labelledby="h-transcript">
+    <h2 id="h-transcript">Heard and said</h2>
+    <ol id="transcript" class="transcript" aria-live="off"></ol>
+    <p id="transcript-empty" class="empty">Nothing heard yet. Partial transcripts appear in grey as words arrive; a finished turn turns solid.</p>
+    <details class="rail" id="rail" open>
+      <summary>AssemblyAI wire rail</summary>
+      <p class="hint">The Voice Agent API's protocol events as they happen, newest first. Tool results are held while the agent is speaking and dropped if the owner interrupts.</p>
+      <ol id="wire" class="wire"></ol>
+    </details>
+  </section>
+
+  <section class="pane" id="drafts-pane" aria-labelledby="h-drafts" tabindex="-1">
+    <h2 id="h-drafts">Drafts waiting for the owner</h2>
+    <div id="notice" role="status" aria-live="polite"></div>
+    <ul id="leads" class="leads" aria-label="Open leads"></ul>
+    <details class="by-hand" id="by-hand">
+      <summary>Draft by hand</summary>
+      <p class="hint">The owner's own drafting: the same search_catalog, draft_quote and draft_supplier_request the agent calls, posted with actor "owner". Nothing here sends.</p>
+      <form id="hand-form" class="hand-form">
+        <label for="hand-for">For</label>
+        <select id="hand-for"></select>
+        <label for="hand-search">Price list</label>
+        <span class="hand-search"><input id="hand-search" type="search" autocomplete="off" placeholder="for example: Brasswick valve"><button type="button" class="btn" id="hand-find">Search</button></span>
+        <ul id="hand-results" class="hand-results" aria-label="Price-list matches"></ul>
+        <ol id="hand-lines" class="hand-lines" aria-label="Lines of the new draft"></ol>
+        <label for="hand-labor" id="hand-labor-label">Labor hours</label>
+        <input id="hand-labor" type="number" min="0" step="0.5" value="0" inputmode="decimal">
+        <button type="submit" class="btn send" id="hand-create">Create draft</button>
+      </form>
+    </details>
+    <div id="cards" class="cards"></div>
+    <p id="cards-empty" class="empty">No drafts yet. Play the session: the agent's drafts land here, and nothing on this list goes anywhere until the owner taps Approve &amp; send.</p>
+    <button type="button" class="btn primary hero" id="hero-play" hidden>▶ Play the recorded AssemblyAI session</button>
+  </section>
+
+  <div class="stack">
+    <section class="pane" aria-labelledby="h-agent">
+      <h2 id="h-agent">Try it as the agent</h2>
+      <p class="hint">These buttons call the same invoke() the voice agent's tool calls use, with actor "agent". The owner-only verbs are not tools, so every one of these is refused and nothing changes.</p>
+      <div class="panel-buttons" id="agent-buttons"></div>
+      <ol id="tries" class="tries" aria-live="polite"></ol>
+    </section>
+    <section class="pane" aria-labelledby="h-log">
+      <h2 id="h-log">Activity log: who did what</h2>
+      <ol id="log" class="log" role="log" aria-label="Activity log, newest first"></ol>
+      <p id="log-empty" class="empty">Every call through the one invoke() chokepoint lands here, with its actor, refusals included.</p>
+    </section>
+  </div>
+</main>
+
+<footer class="foot">
+  <p id="foot-note">All businesses, people, products and contacts are fictional. The owner's and customer's lines are synthesized speech.</p>
+</footer>
+
+<script src="tailgate.bundle.js?v=869b13b3c620"></script>
+<script src="audio.js?v=869b13b3c620"></script>
+<script src="app.js?v=869b13b3c620"></script>
+</body>
+</html>
