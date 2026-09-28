@@ -743,7 +743,13 @@
       ui.tries.unshift({ key, title: t.label(), refused, unchanged: before === after, message: ` ${refused ? res.body.error : 'The gate allowed this call.'}` });
     }
     ui.tries.length = Math.min(ui.tries.length, 8);
-    refresh();
+    await refresh();
+    // The result lands under the buttons, often below the fold on a small screen; bring it
+    // into view so the refusal is seen where the judge clicked.
+    window.requestAnimationFrame(() => {
+      const result = $('tries').firstElementChild;
+      if (result) result.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    });
   }
 
   // ---- owner actions ---------------------------------------------------------------------------
