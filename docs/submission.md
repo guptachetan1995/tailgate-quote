@@ -47,8 +47,9 @@ Built for owner-operators of plumbing, heating and HVAC firms with fewer than 20
 
 ### Categories
 
-Required multiselect. Pick the closest from lablab's list at fill time, in this order of
-preference: Voice AI, AI Agents, Productivity, Small Business.
+Required multiselect. Filled 28 Sep 2026 from lablab's own list (it has no "Voice AI",
+"AI Agents" or "Small Business"): Voice Assistant, Productivity, Business, Web Application,
+ProjectFromScratch (the repository was created inside the build window).
 
 ### Event Tracks
 
@@ -56,9 +57,11 @@ This event has no tracks configured; leave blank.
 
 ### Technologies Used
 
-Required multiselect from lablab's technology list. AssemblyAI (required by the event);
-then, where the list has them: AssemblyAI Voice Agent API, Node.js, JavaScript, GitHub
-Pages.
+Required multiselect from lablab's technology list. The list has no AssemblyAI entry (nor
+Node.js, JavaScript or GitHub Pages), checked 28 Sep 2026 across all 210 options, so the
+form carries the two that are true: rest api (the app's own HTTP API and AssemblyAI's REST
+endpoints) and Claude Code (what the project was built with). AssemblyAI is named in both
+descriptions, the deck and the video instead.
 
 ## Page 2 — Media
 
