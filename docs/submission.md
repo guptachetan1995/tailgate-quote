@@ -140,9 +140,9 @@ owner control and a "Try it as the agent" panel live. It holds no API key.
 Optional, at most 2000 characters.
 
 ```
-Talk to it: clone the repo, run npm ci, put a free AssemblyAI key in .env, then npm start, open http://127.0.0.1:3000, choose Live mic and press Start talking (headphones recommended). Without a key the same app runs on a scripted provider, and npm test runs the whole suite offline.
+Talk to it: clone the repo, run npm ci, put a free AssemblyAI key in .env, then npm start, open http://127.0.0.1:3000, choose Live mic and press Start talking (headphones recommended). Without a key the same app replays the recorded session, and npm test runs the whole suite offline.
 
-The static demo cannot open a voice session itself, by design: AssemblyAI's token endpoints are server-side only and a public page must never hold a key. It replays a real session instead, through the real code, so the refusals a judge sees are the production ones. In that recording the owner's and customer's lines are synthesized speech clips with added site noise, fed as audio into a live AssemblyAI session; the agent's voice and every tool call are the session's own.
+The static demo cannot open a voice session itself, by design: AssemblyAI's token endpoints are server-side only and a public page must never hold a key. It replays a real session instead, through the real code, so the refusals a judge sees are the production ones. In that recording the owner's and customer's lines are synthesized speech clips with added site noise, fed as audio into a live AssemblyAI session; the agent's voice and every tool call are the session's own. Measured on it (session sess_e438576f0b474a60a34bb08892006b2c, files in docs/evidence/): the agent's voice back a median 1.9 s after the owner stopped talking, the draft on screen a median 1.5 s after, and keyterms from the price list turning "Aqualon TX199" into "Aquilon TX-199".
 
 How it scales: the approval gate is a property of one function, not of the model, so the same pattern holds for any drafting verb a trade business adds (change orders, schedule proposals, supplier orders), and it can be licensed to field-service platforms as a per-quote API. The per-seat cost is dominated by voice minutes at a published per-minute rate, which keeps pricing predictable.
 ```
