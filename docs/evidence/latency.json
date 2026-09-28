@@ -1,0 +1,68 @@
+{
+  "tape": "demo-session.jsonl",
+  "label": "Replay of a real AssemblyAI Voice Agent session (sess_e438576f0b474a60a34bb08892006b2c, recorded 2026-09-28)",
+  "sessionId": "sess_e438576f0b474a60a34bb08892006b2c",
+  "synthetic": false,
+  "turns": [
+    {
+      "item_id": "msg_dd40129d22484936a3c46bd5bdfea014",
+      "text": "New job for Priya Shah at 41 Linden Avenue. Swap her old tank for an Aquilon TX-199 tankless, 2 Brasswick ball valves, and 20 feet of Flexline PEX. Call it 6 hours labor.",
+      "firstAudioMs": 1892,
+      "drafts": []
+    },
+    {
+      "item_id": "msg_28bc1fde040748b9bfc82605992f50c8",
+      "text": "3/4.",
+      "firstAudioMs": 2184,
+      "drafts": [
+        {
+          "tool": "draft_quote",
+          "call_id": "chatcmpl-tool-a36a014773d50f8c",
+          "draftMs": 1501
+        }
+      ]
+    },
+    {
+      "item_id": "msg_bbb136c479b54b87bf78f3248080b21a",
+      "text": "Actually, make that 30 feet of PEX and add a Panrite drain pan.",
+      "firstAudioMs": 738,
+      "drafts": [
+        {
+          "tool": "revise_quote",
+          "call_id": "chatcmpl-tool-ad71d1acbe40c25a",
+          "draftMs": 9505
+        }
+      ]
+    },
+    {
+      "item_id": "msg_722596bbeec24d10b12dfe4155c7964a",
+      "text": "And check Northgate has the TX-199 in stock for Thursday.",
+      "firstAudioMs": 2005,
+      "drafts": [
+        {
+          "tool": "draft_supplier_request",
+          "call_id": "chatcmpl-tool-9270eb66d15f305a",
+          "draftMs": 1342
+        }
+      ]
+    },
+    {
+      "item_id": null,
+      "text": null,
+      "firstAudioMs": 489,
+      "drafts": []
+    }
+  ],
+  "endOfSpeechToFirstAudio": {
+    "n": 5,
+    "min": 489,
+    "median": 1892,
+    "max": 2184
+  },
+  "endOfSpeechToDraft": {
+    "n": 3,
+    "min": 1342,
+    "median": 1501,
+    "max": 9505
+  }
+}

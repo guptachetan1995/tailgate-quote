@@ -290,17 +290,21 @@ function checkLine({ item, siblings, catalog, qty, heard, detailHeard, turns, mo
     if (bad) return { reason: bad };
   }
   const result = { turnId: found.turnId };
-  if (detailHeard !== undefined) {
+  // An item that comes in one size has no size to choose, so a size answer cited on its line
+  // proves nothing and is ignored rather than failing the line (seen on a real session: the
+  // agent put the answer "3/4." on every line, the one-size heater included).
+  const sized = Boolean(item.variant) && catalog.some((other) => other.name === item.name && other.sku !== item.sku);
+  if (detailHeard !== undefined && sized) {
     const detail = findInTurns(turns, detailHeard, models);
     if (!detail) return { reason: notHeard('detail_heard', detailHeard) };
-    if (!item.variant || !hasVariant(detail.tokens, item.variant)) {
-      return { reason: `detail_heard ${q(detailHeard)} does not say ${item.variant || 'a size'}, the size of ${item.sku}.` };
+    if (!hasVariant(detail.tokens, item.variant)) {
+      return { reason: `detail_heard ${q(detailHeard)} does not say ${item.variant}, the size of ${item.sku}.` };
     }
     result.detailTurnId = detail.turnId;
-  } else if (item.variant && siblings.length > 0 && !hasVariant(found.tokens, item.variant)) {
+  } else if (detailHeard === undefined && item.variant && siblings.length > 0 && !hasVariant(found.tokens, item.variant)) {
     const sizes = [item, ...siblings].map((s) => s.variant).join(' and ');
     return {
-      reason: `The price list has ${item.name} in ${sizes}, and ${q(heard)} does not say which. Ask the owner which one, then put the words of their answer in detail_heard.`,
+      reason: `The price list has ${item.name} in ${sizes}, and ${q(heard)} does not say which. If the owner already answered which size, put the exact words of that answer in detail_heard on this line; otherwise ask the owner which one, then put the words of their answer in detail_heard.`,
     };
   }
   return result;

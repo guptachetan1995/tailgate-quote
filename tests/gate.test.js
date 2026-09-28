@@ -47,15 +47,15 @@ describe('the agent tool registry', () => {
 });
 
 describe('invoke refuses every owner-only verb for the agent, leaving state unchanged', () => {
-  const calls = (ctx) => [
-    ['send_quote', { draft_id: ctx.quoteId }],
-    ['send_supplier_request', { draft_id: ctx.requestId }],
-    ['discard_draft', { draft_id: ctx.quoteId, reason: 'the agent tried' }],
-  ];
+  const ARGS = {
+    send_quote: (ctx) => ({ draft_id: ctx.quoteId }),
+    send_supplier_request: (ctx) => ({ draft_id: ctx.requestId }),
+    discard_draft: (ctx) => ({ draft_id: ctx.quoteId, reason: 'the agent tried' }),
+  };
 
-  test.each([0, 1, 2])('owner verb #%i as agent', (i) => {
+  test.each(Object.keys(ARGS))('%s as the agent is refused', (tool) => {
     const ctx = withBothDrafts();
-    const [tool, args] = calls(ctx)[i];
+    const args = ARGS[tool](ctx);
     const before = ctx.store.snapshot();
     const res = ctx.invoke(tool, args, 'agent');
     expect(res.success).toBe(false);

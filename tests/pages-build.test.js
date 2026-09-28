@@ -23,7 +23,9 @@ jest.setTimeout(30000);
 const DUMMY_KEY = 'aai-dummy-key-for-the-pages-build-0123456789';
 const plain = (v) => JSON.parse(JSON.stringify(v));
 const flush = () => new Promise((resolve) => setImmediate(resolve));
-const HEADER = parseTape(fs.readFileSync(defaultTape(), 'utf8')).header;
+// Built from the committed synthetic sample, so these expectations hold whether or not a real
+// session has been recorded into tapes/demo-session.jsonl on this machine.
+const HEADER = parseTape(fs.readFileSync(FIXTURE, 'utf8')).header;
 
 let dirs;
 let first;
@@ -31,8 +33,8 @@ let first;
 beforeAll(async () => {
   process.env.ASSEMBLYAI_API_KEY = DUMMY_KEY;
   dirs = [fs.mkdtempSync(path.join(os.tmpdir(), 'tailgate-pages-')), fs.mkdtempSync(path.join(os.tmpdir(), 'tailgate-pages-'))];
-  first = await build(dirs[0]);
-  await build(dirs[1]);
+  first = await build(dirs[0], { tape: FIXTURE });
+  await build(dirs[1], { tape: FIXTURE });
 });
 
 afterAll(() => {
@@ -65,7 +67,19 @@ async function playToEnd(b) {
 describe('the build', () => {
   test('writes the page, the bundle and the page scripts, and nothing else', () => {
     expect(fs.readdirSync(dirs[0]).sort()).toEqual(['.nojekyll', 'app.js', 'audio.js', 'index.html', 'mic-worklet.js', BUNDLE].sort());
-    expect(first.tape).toBe(path.relative(path.join(__dirname, '..'), defaultTape()).split(path.sep).join('/'));
+    expect(first.tape).toBe(path.relative(path.join(__dirname, '..'), FIXTURE).split(path.sep).join('/'));
+  });
+
+  test('the default tape is the recorded session when one exists, otherwise the synthetic sample', () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'tailgate-root-'));
+    try {
+      expect(defaultTape(root)).toBe(path.join(root, 'tests', 'fixtures', 'sample-session.jsonl'));
+      fs.mkdirSync(path.join(root, 'tapes'));
+      fs.writeFileSync(path.join(root, 'tapes', 'demo-session.jsonl'), '');
+      expect(defaultTape(root)).toBe(path.join(root, 'tapes', 'demo-session.jsonl'));
+    } finally {
+      fs.rmSync(root, { recursive: true, force: true });
+    }
   });
 
   test('index.html loads the bundle where the marker was, versions every script, and links only relatively', () => {

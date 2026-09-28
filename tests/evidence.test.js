@@ -184,7 +184,7 @@ describe('sizes: the agent must ask when the price list has more than one', () =
   test('a valve without a size is refused with an instruction to ask', () => {
     const r = line('BWK-BV34', 2, 'two Brasswick ball valves', [LINES.U1]);
     expect(r.reason).toMatch(/has Brasswick ball valve in 3\/4 and 1\/2/);
-    expect(r.reason).toMatch(/Ask the owner which one, then put the words of their answer in detail_heard/);
+    expect(r.reason).toMatch(/otherwise ask the owner which one, then put the words of their answer in detail_heard/);
   });
 
   test('a size said in the same words needs no detail', () => {
@@ -196,6 +196,22 @@ describe('sizes: the agent must ask when the price list has more than one', () =
     expect(line('BWK-BV34', 2, 'two Brasswick ball valves', t, 'Half-inch').reason).toMatch(/does not say 3\/4/);
     expect(line('BWK-BV12', 2, 'two Brasswick ball valves', t, 'Half-inch')).toEqual({ turnId: 'turn_1', detailTurnId: 'turn_2' });
     expect(line('BWK-BV12', 2, 'two Brasswick ball valves', [LINES.U1, 'Half.'], 'Half')).toEqual({ turnId: 'turn_1', detailTurnId: 'turn_2' });
+  });
+
+  // Seen on a real session: speech-to-text writes the answer as "3/4.", and the agent put it
+  // on every line, including items that come in one size.
+  test('a size answer written as digits is accepted, and ignored on an item that comes in one size', () => {
+    const t = ['New job for Priya Shah. Swap her old tank for an Aquilon TX-199 tankless, 2 Brasswick ball valves, and 20 feet of Flexline PEX.', '3/4.'];
+    expect(line('BWK-BV34', 2, '2 Brasswick ball valves', t, '3/4.')).toEqual({ turnId: 'turn_1', detailTurnId: 'turn_2' });
+    expect(line('AQN-TX199', 1, 'an Aquilon TX-199 tankless', t, '3/4.')).toEqual({ turnId: 'turn_1' });
+    expect(line('FLX-PA34', 20, '20 feet of Flexline PEX', t, '3/4.')).toEqual({ turnId: 'turn_1' });
+  });
+
+  test('a revision (no sibling rule) still checks a size answer on an item that has sizes', () => {
+    const t = [LINES.U1, 'Half-inch.'];
+    const revise = (sku, detail) => checkLine({ item: item(sku), siblings: [], catalog: seed.catalog, qty: 2, heard: 'two Brasswick ball valves', detailHeard: detail, turns: turns(...t), models });
+    expect(revise('BWK-BV34', 'Half-inch').reason).toMatch(/does not say 3\/4/);
+    expect(revise('BWK-BV12', 'Half-inch')).toEqual({ turnId: 'turn_1', detailTurnId: 'turn_2' });
   });
 
   test('detail_heard must itself have been heard', () => {

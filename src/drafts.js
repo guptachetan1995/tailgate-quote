@@ -42,9 +42,12 @@ function findDraft(state, id) {
   return draft;
 }
 
+// The time of day as the owner's screen shows it (public/app.js clock()).
+const timeOfDay = (iso) => new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+
 function assertOpen(draft) {
   if (draft.status === 'sent') {
-    throw new Refusal(`${draft.id} was sent at ${draft.sentAt} and is frozen; nothing was changed. A change after sending needs a new draft.`);
+    throw new Refusal(`${draft.id} was sent at ${timeOfDay(draft.sentAt)} and is frozen; nothing was changed. A change after sending needs a new draft.`);
   }
   if (draft.status === 'discarded') {
     throw new Refusal(`${draft.id} was discarded by the owner ("${draft.discardReason}"); nothing was changed.`);

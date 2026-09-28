@@ -6,21 +6,49 @@ on lablab.ai (September 2026). Not affiliated with or endorsed by AssemblyAI.
 **Voice drafts. Hands decide.** Other apps turn a voice memo into a quote. Tailgate Quote
 talks it through with you, shows a receipt for every line, and can't be talked into sending.
 
+**[Try the live demo](https://guptachetan1995.github.io/tailgate-quote/)**: a real
+AssemblyAI Voice Agent session replayed in your browser through the real approval gate, with
+the agent's own voice, and a panel where you can try the forbidden actions as the agent.
+
+![The live demo after the recorded session: the drafted quote with a receipt on every line, and the customer's spoken "send it over" heard and not accepted](docs/hero.png)
+
 A trade contractor finishes a site visit and talks the job through at the tailgate of the
-van. An AssemblyAI voice agent listens, asks when something is ambiguous ("half-inch or
-three-quarter?"), drafts a priced, itemized quote in which every line is tied to the exact
+van. An AssemblyAI voice agent listens, asks when something is ambiguous ("What size Brasswick
+ball valves do you need?"), drafts a priced, itemized quote in which every line is tied to the exact
 words that produced it, and reads it back. **It can draft. It can never send.** Sending a
 quote, sending a supplier request and discarding a draft are owner-only actions: each one is
 **never registered as a tool**, so the model cannot call it, and a spoken "go ahead and send
 it" — from the customer standing at the tailgate or from the owner — is transcribed, logged,
 and refused as approval. Only a tap on screen commits.
 
-> **Status (28 Sep 2026).** The approval gate, the evidence checks, pricing, the
-> spoken-approval detector, the voice bridge, the dashboard and the static live demo run
-> offline and are covered by the test suite. The live AssemblyAI provider and the Live mic
-> mode are tested against scripted sockets. The page always says which tape it replays: a
-> recorded AssemblyAI session is labelled with its session id and date, and the scripted
-> sample in `tests/fixtures/` is labelled as scripted.
+> **Status (28 Sep 2026).** A real AssemblyAI Voice Agent session was recorded on 28 Sep
+> 2026: `sess_e438576f0b474a60a34bb08892006b2c`, 79 seconds. The demo's lines, spoken in
+> AssemblyAI's own voices, were streamed into it as microphone audio through the real bridge
+> and approval gate. Its tape is [`tapes/demo-session.jsonl`](tapes/demo-session.jsonl), the
+> agent's voice [`tapes/demo-session.agent.m4a`](tapes/demo-session.agent.m4a), and the
+> measurements and the session record from `GET /v1/sessions/{id}` are in
+> [`docs/evidence/`](docs/evidence/). The [static live demo](https://guptachetan1995.github.io/tailgate-quote/)
+> replays exactly that tape, with the agent's recorded voice; **Live mic** runs the same
+> bridge against the live API on your own key. 351 tests across 25 suites run offline.
+
+| Measured on the recorded session | Result |
+|---|---|
+| End of speech to the agent's first audio | median 1.9 s (0.5 to 2.2 s, 5 turns), [`latency.json`](docs/evidence/latency.json) |
+| End of speech to a draft on screen | median 1.5 s (1.3 to 9.5 s, 3 drafts; the 9.5 s is the correction, which the agent applied after re-reading the old total once) |
+| Tool calls | 7, none refused by the gate |
+| The owner talks over the read-back | the agent stops mid-sentence (`reply.done` status `interrupted`) and applies "make that 30 feet of PEX and add a Panrite drain pan" as a revision: $2,212.50 to $2,255.00 |
+| The customer says "Sounds great, go ahead and send it over" | heard, logged, refused as approval; nothing sent |
+| Keyterms from the price list (Streaming Speech-to-Text v3, the same noisy clip twice) | without: "an Aqualon TX199 tankless … Call at 6 hours labor"; with: "an Aquilon TX-199 tankless … Call it 6 hours labor", [`keyterms-ab.json`](docs/evidence/keyterms-ab.json) |
+
+**What the real session changed.** Recording against the live API found two things the
+scripted sockets could not. Speech-to-text writes the spoken answer "three-quarter" as
+"3/4." and "two valves" as "2 valves"; the evidence matcher already normalizes both, and a
+test now pins it on the real transcript. And the agent cited the size answer on every line,
+including items that come in one size, which failed the whole draft; a size answer on a
+one-size line is now ignored (it proves nothing), while a size answer on an item with sizes
+is still checked word for word. The prompt also gained three rules the first takes showed
+were missing: amounts in US dollars, a correction revises the existing draft, and a stock
+question drafts a supplier check.
 
 ## Why voice, and why voice never commits
 
@@ -30,6 +58,15 @@ anyone in earshot can say "send it"; speech is misheard; and anything in a trans
 reach the model. So the split is structural rather than a prompt instruction: the agent's
 toolset contains only drafting and reading verbs, and the commit verbs exist only behind a
 button.
+
+Many voice agents add an approval step after the draft. That stops the model committing on
+its own, but it still lets the voice channel approve: an agent that asks "shall I send it?"
+and acts on "yes" makes whoever is in earshot a signer — the customer at the tailgate, a
+misheard "yes", words that reached the transcript. Tailgate Quote refuses approval that
+arrives by voice at all, says so out loud, and logs the words as heard, not accepted (the
+red "Heard. Not accepted." banner). It also proves every line the other way round: an edit
+that cites words nobody said — the demo panel's "make that forty feet of PEX" — is refused
+before it reaches the draft.
 
 ## What the agent does, what only the owner does
 

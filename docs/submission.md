@@ -36,9 +36,9 @@ what is unique.
 ```
 Small trade contractors quote jobs from memory. The site visit ends at the van with the whole job in the owner's head, the quote waits until evening, and details slip between the driveway and the keyboard.
 
-Tailgate Quote lets the owner say the job once, at the tailgate. An AssemblyAI Voice Agent listens with streaming speech-to-text, live partial transcripts, turn detection and keyterms built from the owner's own price list. It talks back: it asks when an item is ambiguous ("half-inch or three-quarter?"), reads the draft back, and stops when the owner talks over it. Through JSON-Schema tool calls it searches the price list, drafts an itemized customer quote, revises it on a correction and drafts a supplier stock check.
+Tailgate Quote lets the owner say the job once, at the tailgate. An AssemblyAI Voice Agent listens with streaming speech-to-text, live partial transcripts, turn detection and keyterms built from the owner's own price list. It talks back: it asks when an item is ambiguous ("What size Brasswick ball valves do you need?"), reads the draft back, and stops when the owner talks over it. Through JSON-Schema tool calls it searches the price list, drafts an itemized quote, revises it on a correction and drafts a supplier stock check.
 
-Unlike voice-memo quoting apps, it is a live conversation that proves every line and cannot be talked into sending. Every line has a receipt, the owner's exact words highlighted where he said them, and a line is refused if its words were never heard, carry another quantity or were about another customer. The model never sets a price: prices come from the price list, and any price field in a tool call is refused. And voice never commits. Sending a quote, sending a supplier request and discarding a draft are owner-only actions that are never registered as tools. When the customer at the tailgate says "go ahead and send it over", the agent answers that only the owner's tap sends, and the log records the words as heard, not accepted.
+Unlike voice-memo quoting apps, it is a live conversation that proves every line; unlike agents that act on a spoken "yes", it cannot be talked into sending. Every line has a receipt, the owner's exact words highlighted where he said them, and a line is refused if its words were never heard, carry another quantity or were about another customer. The model never sets a price: prices come from the price list, and any price field in a tool call is refused. And voice never commits. Sending a quote, sending a supplier request and discarding a draft are owner-only actions that are never registered as tools. When the customer at the tailgate says "go ahead and send it over", the agent answers that only the owner's tap sends, and the log records the words as heard, not accepted.
 
 Every tool call and every button goes through one function with an actor, so the agent and the owner share one surface. The live demo replays a real recorded AssemblyAI session through that same gate, with a panel where you can try the forbidden actions as the agent and watch them fail.
 
@@ -71,8 +71,8 @@ beside it, the product name and the line "Voice drafts. Hands decide."
 
 ### Video Presentation
 
-MP4 (H.264 video, AAC audio), 1600 × 900, 25 fps, at most 300 MB, at most 5 minutes. The
-form takes a file upload; there is no video-link field. Target length 4:35. Structure, in
+MP4 (H.264 video, AAC audio), 1920 × 1080, 25 fps, at most 300 MB, at most 5 minutes. The
+form takes a file upload; there is no video-link field. The render is 4:32 (42 MB). Structure, in
 the lablab guidelines' order after a 5-second teaser: the introduction, the PDF deck's key
 slides, then the working product, using the real recorded AssemblyAI session (including the
 agent's own voice) for the demo beats. The beat-by-beat script is in
@@ -149,7 +149,7 @@ How it scales: the approval gate is a property of one function, not of the model
 | Criterion | Evidence |
 |---|---|
 | Application of Technology | Voice Agent API session with tool calling, a clarifying question, interruptions, keyterms and live partials; the wire rail and the measured latencies; the keyterms comparison on Streaming Speech-to-Text; the recorded session behind the live demo; local talk mode; the test suite for the tool-result timing and the gate |
-| Presentation | The 4:35 video in the guidelines' order (introduction, deck, product), the ten-page deck, the README's architecture diagram, business case and tools table |
+| Presentation | The 4:32 video in the guidelines' order (introduction, deck, product), the ten-page deck, the README's architecture diagram, business case and tools table |
 | Business Value | A named user and job, Census-based market sizing in dollars, a price set against named competitors, a worked ROI with labelled assumptions, a second channel and a pilot plan |
 | Originality | Unlike voice-memo quoting apps: a live conversation, a receipt for every line in the owner's own words, no model-set prices, and an agent that cannot be talked into sending, with a panel where judges can try to break the gate |
 
