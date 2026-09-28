@@ -4,7 +4,10 @@ dist/
 .env.*
 !.env.example
 /clips/
-tapes/raw/
+# Raw agent audio stays local, except the demo tape's: the static demo and every rebuild of it
+# play that one.
+tapes/raw/*
+!tapes/raw/demo-session.agent.pcm
 .DS_Store
 *.log
 /media/
